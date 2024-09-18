@@ -220,7 +220,7 @@ unlabeled_idx = torch.tensor(list(set(unlabeled_idx.cpu().numpy()) - set(idx_att
 print(unlabeled_idx)
 # In[10]:
 from models.GCN2 import GCN2
-from gnn_model.gin import GIN
+from models.GIN import GIN
 from models.discriminator import Discriminator
 from torch_geometric.explain import GNNExplainer
 from models.FeatureMaskLearner import FeatureMaskLearner
