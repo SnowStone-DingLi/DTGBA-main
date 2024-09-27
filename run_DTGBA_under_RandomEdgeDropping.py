@@ -225,10 +225,9 @@ unlabeled_idx = torch.tensor(list(set(unlabeled_idx.cpu().numpy()) - set(idx_att
 print(unlabeled_idx)
 # In[10]:
 from models.GCN2 import GCN2
-from models.GIN import GIN
+from gnn_model.gin import GIN
 from models.discriminator import Discriminator
-from torch_geometric.explain import GNNExplainer
-from models.FeatureMaskLearner import FeatureMaskLearner
+from torch_geometric.explain import Explainer, GNNExplainer
 
 features = data.x
 labels = data.y
@@ -253,7 +252,7 @@ real =  pred_labels == data.y
 print(all_n)
 print("clean acc: ", real.sum().item()*1.0/ all_n)
 
-explainer = FeatureMaskLearner(
+explainer = Explainer(
     model=test_model,
     algorithm=GNNExplainer(epochs=200),
     explanation_type='model',
@@ -330,7 +329,7 @@ rep_net = GIN(2, 2, features.shape[1],
 
 rep_net.eval()
 
-netD = Discriminator(features.shape[1], args.hidden, 1, args.loss_type, 0, args.D_sn, d_type=args.D_type).to(device)
+netD = Discriminator(features.shape[1], args.hidden, 1, args.loss_type, 0, args.D_sn, d_type=args.D_type, num_disc= args.K).to(device)
 optimizer_D = torch.optim.Adam([{'params': netD.parameters()}], lr=args.lr_D, weight_decay=args.wd_D)
 
 model = Backdoor(args, device)
