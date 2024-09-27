@@ -19,7 +19,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
 parser.add_argument('--seed', type=int, default=15, help='Random seed.')
 parser.add_argument('--model', type=str, default='GCN', help='model',
                     choices=['GCN', 'GAT', 'GraphSage', 'GIN'])
-parser.add_argument('--dataset', type=str, default='ogbn-arxiv',
+parser.add_argument('--dataset', type=str, default='Cora',
                     help='Dataset',
                     choices=['Cora', 'Pubmed', 'ogbn-arxiv'])
 parser.add_argument('--train_lr', type=float, default=0.01,
@@ -44,13 +44,13 @@ parser.add_argument('--use_vs_number', action='store_true', default=True,
                     help="if use detailed number to decide Vs")
 parser.add_argument('--vs_ratio', type=float, default=0,
                     help="ratio of poisoning nodes relative to the full graph")
-parser.add_argument('--vs_number', type=int, default=565,
+parser.add_argument('--vs_number', type=int, default=40,
                     help="number of poisoning nodes relative to the full graph")
 # defense setting
-parser.add_argument('--defense_mode', type=str, default="prune",
+parser.add_argument('--defense_mode', type=str, default="none",
                     choices=['prune', 'isolate', 'none'],
                     help="Mode of defense")
-parser.add_argument('--prune_thr', type=float, default=0.1,
+parser.add_argument('--prune_thr', type=float, default=0.0,
                     help="Threshold of prunning edges")
 parser.add_argument('--target_loss_weight', type=float, default=1,
                     help="Weight of optimize outter trigger generator")
@@ -220,7 +220,7 @@ unlabeled_idx = torch.tensor(list(set(unlabeled_idx.cpu().numpy()) - set(idx_att
 print(unlabeled_idx)
 # In[10]:
 from models.GCN2 import GCN2
-from models.GIN import GIN
+from gnn_model.gin import GIN
 from models.discriminator import Discriminator
 from torch_geometric.explain import GNNExplainer
 from models.FeatureMaskLearner import FeatureMaskLearner
@@ -323,7 +323,7 @@ rep_net = GIN(2, 2, features.shape[1], 64, labels.max().item()+1, 0.5, False, 's
 
 rep_net.eval()
 
-netD = Discriminator(features.shape[1], args.hidden, 1, args.loss_type, 0, args.D_sn, d_type=args.D_type).to(device)
+netD = Discriminator(features.shape[1], args.hidden, 1, args.loss_type, 0, args.D_sn, d_type=args.D_type, num_disc= args.K).to(device)
 optimizer_D = torch.optim.Adam([{'params': netD.parameters()}], lr=args.lr_D, weight_decay=args.wd_D)
 
 model = Backdoor(args, device)
