@@ -24,7 +24,7 @@ def _add_sn(m):
    
 
 class Discriminator(nn.Module):
-    def __init__(self, nfeat, nhid, nclass, loss_type, dropout=0.5 , mode='SN', d_type='gin', num_mlp_layers=2, num_layers=2):
+    def __init__(self, nfeat, nhid, nclass, loss_type, dropout=0.5 , mode='SN', d_type='gin', num_mlp_layers=2, num_layers=2, num_disc = 3):
         super(Discriminator, self).__init__()
         if d_type == 'gin':
             self.dnet = GIN(num_layers, num_mlp_layers, nfeat, nhid, nclass, dropout, False, 'sum', 'sum')
