@@ -47,10 +47,10 @@ parser.add_argument('--vs_ratio', type=float, default=0,
 parser.add_argument('--vs_number', type=int, default=40,
                     help="number of poisoning nodes relative to the full graph")
 # defense setting
-parser.add_argument('--defense_mode', type=str, default="none",
+parser.add_argument('--defense_mode', type=str, default="prune",
                     choices=['prune', 'isolate', 'none'],
                     help="Mode of defense")
-parser.add_argument('--prune_thr', type=float, default=0.0,
+parser.add_argument('--prune_thr', type=float, default=0.5,
                     help="Threshold of prunning edges")
 parser.add_argument('--target_loss_weight', type=float, default=1,
                     help="Weight of optimize outter trigger generator")
