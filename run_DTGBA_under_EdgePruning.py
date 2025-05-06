@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 import torch
 from copy import deepcopy
-from torch_geometric.datasets import Planetoid, Reddit2, Flickr, CitationFull, Amazon, Twitch, Actor
+from torch_geometric.datasets import Planetoid, Reddit2, Flickr, CitationFull, Amazon, Twitch, Actor, WikipediaNetwork
 
 # from torch_geometric.loader import DataLoader
 from help_funcs import prune_unrelated_edge, prune_unrelated_edge_isolated
@@ -21,7 +21,7 @@ parser.add_argument('--model', type=str, default='GCN', help='model',
                     choices=['GCN', 'GAT', 'GraphSage', 'GIN'])
 parser.add_argument('--dataset', type=str, default='Cora',
                     help='Dataset',
-                    choices=['Cora', 'Pubmed', 'ogbn-arxiv'])
+                    choices=['Cora', 'Pubmed', 'ogbn-arxiv', 'Actor', 'chameleon'])
 parser.add_argument('--train_lr', type=float, default=0.01,
                     help='Initial learning rate.')
 parser.add_argument('--weight_decay', type=float, default=5e-4,
@@ -120,7 +120,6 @@ elif (args.dataset == 'Flickr'):
                      transform=transform)
 elif (args.dataset == 'ogbn-arxiv'):
     from ogb.nodeproppred import PygNodePropPredDataset
-
     # Download and process data at './dataset/ogbg_molhiv/'
     dataset = PygNodePropPredDataset(name='ogbn-arxiv', root='./data/')
     split_idx = dataset.get_idx_split()
@@ -140,6 +139,12 @@ elif (args.dataset in ['DE', 'EN','ES', 'FR', 'PT' , 'RU']):
 elif (args.dataset == 'Actor'):
     dataset = Actor(root='./data/', \
                         transform=transform)
+elif (args.dataset in ['chameleon', 'crocodile','squirrel']):
+    dataset = WikipediaNetwork(root='./data/', \
+                        name=args.dataset, \
+                        geom_gcn_preprocess=True, \
+                        transform=transform)
+    
 data = dataset[0].to(device)
 
 if (args.dataset == 'ogbn-arxiv'):
@@ -163,6 +168,12 @@ elif (args.dataset == 'Computers' or args.dataset == 'Photo' or args.dataset == 
     data.val_mask = torch.zeros(nNode, dtype=torch.bool).to(device)
     data.test_mask = torch.zeros(nNode, dtype=torch.bool).to(device)
 elif (args.dataset in ['DE', 'EN','ES', 'FR', 'PT' , 'RU']):
+    nNode = data.x.shape[0]
+    setattr(data, 'train_mask', torch.zeros(nNode, dtype=torch.bool).to(device))
+    # dataset[0].train_mask = torch.zeros(nEdge, dtype=torch.bool).to(device)
+    data.val_mask = torch.zeros(nNode, dtype=torch.bool).to(device)
+    data.test_mask = torch.zeros(nNode, dtype=torch.bool).to(device)
+elif (args.dataset in ['chameleon', 'crocodile','squirrel']):
     nNode = data.x.shape[0]
     setattr(data, 'train_mask', torch.zeros(nNode, dtype=torch.bool).to(device))
     # dataset[0].train_mask = torch.zeros(nEdge, dtype=torch.bool).to(device)
