@@ -7,7 +7,7 @@
 Please see requirements.txt.
 
 ## 3. Datasets
-In our experiments, we use three benchmark datasets, i.e., Cora, Pubmed, and OGB-Arxiv. You need to create a folder called `./data` under `DTGBA-main`. Provide a dataset that will be downloaded automatically when you run the corresponding code. For Cora and Pubmed, you'll use `torch_geometric.datasets`'s `Planetoid`. For OGB-Arxiv, you will use `ogb.nodeproppred`'s `PygNodePropPredDataset`. Make sure these packages are downloaded before running.
+In our experiments, we use five benchmark datasets, i.e., Cora, Pubmed, OGB-Arxiv, Chameleon, and Actor. You need to create a folder called `./data` under `DTGBA-main`. Provide a dataset that will be downloaded automatically when you run the corresponding code. For Cora and Pubmed, you'll use `torch_geometric.datasets`'s `Planetoid`. For OGB-Arxiv, you will use `ogb.nodeproppred`'s `PygNodePropPredDataset`. For Chameleon, you'll use `torch_geometric.datasets`'s `WikipediaNetwork`. For Actor, you'll use `torch_geometric.datasets`'s `Actor`. Make sure these packages are downloaded before running.
 
 ## 4. Our Proposed Method: DTGBA
 Graph backdoor attacks can significantly degrade the performance of graph neural networks (GNNs). Specifically, during the training phase, graph backdoor attacks inject triggers and target class labels into poisoned nodes to create a backdoored GNN. During the testing phase, triggers are added to target nodes, causing them to be misclassified as the target class. However, existing graph backdoor attacks lack sufficient imperceptibility and can be easily resisted by random edge dropping-based defense, limiting their effectiveness. To address these issues, we propose Dual Triggers Graph Backdoor Attack (DTGBA). Initially, we deploy an imperceptible injected trigger generator and multiple discriminators, driving the imperceptibility of the injected triggers through adversarial game between them. Additionally, we introduce a feature mask learner to extract the high-impact and low-impact feature dimensions of the target class's nodes, and then create feature-based triggers by modifying the key feature dimensions of poisoned/target nodes, ensuring that the backdoor implantation can still be effective even if the injected triggers are removed by random edge dropping. Finally, we conduct extensive experiments to demonstrate that DTGBA achieves superior performance.
@@ -19,7 +19,11 @@ python run_DTGBA_under_EdgePruning.py --model GCN --dataset Cora --defense_mode 
 
 python run_DTGBA_under_EdgePruning.py --model GCN --dataset Pubmed --defense_mode prune --prune_thr 0.5
 
-python run_DTGBA_under_EdgePruning.py --model GCN --dataset OGB-Arxiv --defense_mode prune --prune_thr 0.7
+python run_DTGBA_under_EdgePruning.py --model GCN --dataset ogbn-arxiv --defense_mode prune --prune_thr 0.7
+
+python run_DTGBA_under_EdgePruning.py --model GCN --dataset chameleon --defense_mode prune --prune_thr 0.5
+
+python run_DTGBA_under_EdgePruning.py --model GCN --dataset Actor --defense_mode prune --prune_thr 0.5
 ```
 
 And the instructions under RIGBD are as follows (The surrogate model is set to 2-layer GCN.):
@@ -28,7 +32,11 @@ python run_DTGBA_under_RandomEdgeDropping.py --model GCN --dataset Cora --defens
 
 python run_DTGBA_under_RandomEdgeDropping.py --model GCN --dataset Pubmed --defense_mode edgedropping --KK 10 --dropping_rate 0.5
 
-python run_DTGBA_under_RandomEdgeDropping.py --model GCN --dataset OGB-Arxiv --defense_mode edgedropping --KK 10 --dropping_rate 0.5
+python run_DTGBA_under_RandomEdgeDropping.py --model GCN --dataset ogbn-arxiv --defense_mode edgedropping --KK 10 --dropping_rate 0.5
+
+python run_DTGBA_under_RandomEdgeDropping.py --model GCN --dataset chameleon --defense_mode edgedropping --KK 10 --dropping_rate 0.5
+
+python run_DTGBA_under_RandomEdgeDropping.py --model GCN --dataset Actor --defense_mode edgedropping --KK 10 --dropping_rate 0.5
 ```
 
 Other hyperparameter's settings have been given in `parser.add_argument` of the code.
