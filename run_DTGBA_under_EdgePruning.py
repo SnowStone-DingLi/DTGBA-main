@@ -490,26 +490,17 @@ final_edge_index = final_edge_index.to('cpu')
 
 src_features = final_x[final_edge_index[0, :]]  # 形状为[E, D]  
 dst_features = final_x[final_edge_index[1, :]]  # 形状为[E, D]  
-  
-# 计算余弦相似度  
-# 余弦相似度可以通过点积除以两个向量的L2范数来计算  
-# 在PyTorch中，F.cosine_similarity可以直接计算余弦相似度  
-# 但注意F.cosine_similarity期望的输入形状是[B, D, D']，其中B是批量大小  
-# 在我们的例子中，我们可以将边视为一个批次，并使用dim=1来指定沿着哪个维度计算相似度  
+ 
 cosine_sims = F.cosine_similarity(src_features.unsqueeze(1), dst_features.unsqueeze(1), dim=2)  
-  
-# cosine_sims现在是一个形状为[E, 1]的矩阵  
-# 我们可以通过squeeze方法去掉单独的维度，使其变为[E]  
+ 
 cosine_sims = cosine_sims.squeeze()  
 
-# 现在cosine_sims包含了每条边的余弦相似度  
 print(cosine_sims)
 begin=0
 final_list =[]
 for i in range(50):
     end=begin+0.02
     mask = (cosine_sims >= begin) & (cosine_sims < end)  
-    # 使用sum函数计算True的个数，即满足条件的元素个数  
     count = mask.sum().item()
     final_list.append(count)
     begin=end
