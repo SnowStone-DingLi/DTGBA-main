@@ -1,4 +1,4 @@
-:fire::fire::fire: Our work has been accepted by <<Neural Networks>>! :fire::fire::fire:
+:fire::fire::fire: Our work has been accepted by <Neural Networks>! :fire::fire::fire:
 ## 1. Program Overview
 * `./run_DTGBA_under_EdgePruning.py`: The program to run DTGBA under edge pruning.
 * `./run_DTGBA_under_RandomEdgeDropping.py`: The program to run DTGBA under random edge dropping.
